@@ -1,15 +1,15 @@
+require_relative 'astar_map'
+
 class AStarLibrary
 
-    WALKABLE=0
-    UNWALKABLE=1
+
     NOTSTARTED=0
     FOUND=1
     NONEXISTANT=2
     
     def initialize
-      @MapWidth = 80
-      @MapHeight = 60
-      @NumberPeople = 3
+		@astar_map = AStarMap.new
+		@NumberPeople = 3
     end
     
     def path_length(pathfinder_id)
@@ -20,21 +20,18 @@ class AStarLibrary
       @onClosedList = 10
       @notfinished = 0
 
-      @terrainCost=Array.new(@MapWidth+1){Array.new(@MapHeight+1)}
-      @walkability=Array.new(@MapWidth){Array.new(@MapHeight)}
-      @terrainHeight=Array.new(@MapWidth +1){Array.new(@MapHeight+1)}
-      @openList = Array.new(@MapWidth * @MapHeight + 2)
-      @whichList=Array.new(@MapWidth){Array.new(@MapHeight)}
-      @openX = [@MapWidth * @MapHeight + 2]
-      @openY = [@MapWidth * @MapHeight + 2]
-      @parentX=Array.new(@MapWidth){Array.new(@MapHeight)} 
-      @parentY=Array.new(@MapWidth){Array.new(@MapHeight)} 
-      @fcost=Array.new(@MapWidth * @MapHeight + 2)
-      @gcost=Array.new(@MapWidth){Array.new(@MapHeight)} 
-      @hcost=Array.new(@MapWidth * @MapHeight + 2)
+      @openList = Array.new(@astar_map.width * @astar_map.height + 2)
+      @whichList=Array.new(@astar_map.width){Array.new(@astar_map.height)}
+      @openX = [@astar_map.width * @astar_map.height + 2]
+      @openY = [@astar_map.width * @astar_map.height + 2]
+      @parentX=Array.new(@astar_map.width){Array.new(@astar_map.height)} 
+      @parentY=Array.new(@astar_map.width){Array.new(@astar_map.height)} 
+      @fcost=Array.new(@astar_map.width * @astar_map.height + 2)
+      @gcost=Array.new(@astar_map.width){Array.new(@astar_map.height)} 
+      @hcost=Array.new(@astar_map.width * @astar_map.height + 2)
       @pathLength=Array.new(@NumberPeople+1)
       @pathLocation=Array.new(@NumberPeople+1)
-      @pathbank=Array.new(@MapWidth){Array.new(@MapHeight)} 
+      @pathbank=Array.new(@astar_map.width){Array.new(@astar_map.height)} 
       @pathStatus=Array.new(@NumberPeople+1)
       @xPath=Array.new(@NumberPeople+1)
       @yPath=Array.new(@NumberPeople+1)
@@ -46,12 +43,7 @@ class AStarLibrary
  
     end
     
-    def FindPath(
-      pathfinderID,
-      startingX,
-      startingY,
-      targetX,
-      targetY)
+    def FindPath(pathfinderID,startingX,startingY,targetX,targetY)
     
       onOpenList = 0
       parentXval = 0
@@ -92,7 +84,7 @@ class AStarLibrary
       end
 
       #	If target square is UNWALKABLE, return that it's a NONEXISTANT path.
-      if (@walkability[targetX][targetY] == UNWALKABLE) then
+      if (@astar_map.walkability(targetX,targetY) == AStarMap::UNWALKABLE) then
         puts "NONEXISTANT-no path"
         noPath
         return NONEXISTANT
@@ -101,9 +93,9 @@ class AStarLibrary
       #3.Reset some variables that need to be cleared
       if (@onClosedList > 1000000) #reset whichList occasionally
       
-        for x in 0..@MapWidth do
+        for x in 0..@astar_map.width do
         
-          for y in 0..@MapHeight do
+          for y in 0..@astar_map.height do
             @whichList[x][y] = 0
           end
           
@@ -198,44 +190,44 @@ class AStarLibrary
             for a in (parentXval - 1)..(parentXval + 1) do
             
               #	If not off the map (do this first to avoid array out-of-bounds errors)
-              if (a != -1 && b != -1 && a != @MapWidth && b != @MapHeight) then
+              if (a != -1 && b != -1 && a != @astar_map.width && b != @astar_map.height) then
               
                 #	If not already on the closed list (items on the closed list have
                 #	already been considered and can now be ignored).			
                 if (@whichList[a][b] != @onClosedList) then
                 
                   #	If not a wall/obstacle square.
-                  if (@walkability[a][b] != UNWALKABLE) then
+                  if (@astar_map.walkability(a,b) != AStarMap::UNWALKABLE) then
                   
                     #	Don't cut across corners
-                    corner = WALKABLE
+                    corner = AStarMap::WALKABLE
                     if (a == parentXval - 1) then
                       if (b == parentYval - 1) then
-                        if (@walkability[parentXval - 1][parentYval] == UNWALKABLE || @walkability[parentXval][parentYval - 1] == UNWALKABLE) then
-                          corner = UNWALKABLE
+                        if (@astar_map.walkability(parentXval - 1,parentYval) == AStarMap::UNWALKABLE || @astar_map.walkability(parentXval,parentYval - 1) == AStarMap::UNWALKABLE) then
+                          corner = AStarMap::UNWALKABLE
                         end
                       elsif(b == parentYval + 1)
-                        if (@walkability[parentXval, parentYval + 1] == UNWALKABLE || @walkability[parentXval - 1, parentYval] == UNWALKABLE) then
-                          corner = UNWALKABLE
+                        if (@astar_map.walkability(parentXval, parentYval + 1) == AStarMap::UNWALKABLE || @astar_map.walkability(parentXval - 1, parentYval) == AStarMap::UNWALKABLE) then
+                          corner = AStarMap::UNWALKABLE
                         end
                       end
                     elsif(a == parentXval + 1)
                     
                       if (b == parentYval - 1) then
                       
-                        if (@walkability[parentXval, parentYval - 1] == UNWALKABLE || @walkability[parentXval + 1, parentYval] == UNWALKABLE) then
-                          corner = UNWALKABLE 
+                        if (@astar_map.walkability(parentXval, parentYval - 1) == AStarMap::UNWALKABLE || @astar_map.walkability(parentXval + 1, parentYval) == AStarMap::UNWALKABLE) then
+                          corner = AStarMap::UNWALKABLE 
                         end
                         
                       elsif (b == parentYval + 1)
                       
-                        if (@walkability[parentXval + 1, parentYval] == UNWALKABLE || @walkability[parentXval, parentYval + 1] == UNWALKABLE)
-                          corner = UNWALKABLE
+                        if (@astar_map.walkability(parentXval + 1, parentYval) == AStarMap::UNWALKABLE || @astar_map.walkability(parentXval, parentYval + 1) == AStarMap::UNWALKABLE)
+                          corner = AStarMap::UNWALKABLE
                         end
                       end
                     end
                     
-                    if (corner == WALKABLE) then
+                    if (corner == AStarMap::WALKABLE) then
 
                       #	If not already on the open list, add it to the open list.			
                       if (@whichList[a][b] != onOpenList) then
