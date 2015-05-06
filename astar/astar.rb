@@ -7,8 +7,8 @@ class AStarLibrary
     PATH_NON_EXISTANT=2
     
     def initialize(astar_map)
-		@astar_map = astar_map
-		@NumberPeople = 1
+      @astar_map = astar_map
+      @NumberPeople = 1
     end
     
     def path_length(pathfinder_id)
@@ -72,10 +72,10 @@ class AStarLibrary
 
       #2.Quick Path Checks: Under the some circumstances no path needs to
       #	be generated ...
-	  quick_path_test_result = quick_path_test(startX,targetX,startY,targetY,@pathLocation[pathfinderID],@astar_map.walkability(targetX,targetY))
+      quick_path_test_result = quick_path_test(startX,targetX,startY,targetY,@pathLocation[pathfinderID],@astar_map.walkability(targetX,targetY))
 	  
 	  if quick_path_test_result != PATH_NOT_STARTED then
-		return quick_path_test_result
+      return quick_path_test_result
 	  end
 
       #3.Reset some variables that need to be cleared
