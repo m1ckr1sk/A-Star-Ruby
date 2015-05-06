@@ -7,11 +7,13 @@ describe 'astar' do
 it 'should return a direct path when no obstacles in its way in a 10x10 map' do
 	
 	#arrange
-	astar = AStarLibrary.new
+	astar_map = AStarMap.new
+	astar = AStarLibrary.new(astar_map)
 	astar.InitializePathfinder
 	pathfinder_id = 1
 	path_loader = PathLoader.new
 	path_writer = PathWriter.new
+	
 	expected_path = path_loader.load_path "spec/test_data/straight_route/expected_straight_route_10.csv"
 	
 	#act
@@ -28,11 +30,13 @@ end
 it 'should return a direct path when no obstacles in its way in a 10x20 map' do
 	
 	#arrange
-	astar = AStarLibrary.new
+	astar_map = AStarMap.new
+	astar = AStarLibrary.new(astar_map)
 	astar.InitializePathfinder
 	pathfinder_id = 1
 	path_loader = PathLoader.new
 	path_writer = PathWriter.new
+	
 	expected_path = path_loader.load_path "spec/test_data/straight_route/expected_straight_route_10_20.csv"
 	
 	#act

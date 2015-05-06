@@ -2,14 +2,13 @@ require_relative 'astar_map'
 
 class AStarLibrary
 
-
-    NOTSTARTED=0
-    FOUND=1
-    NONEXISTANT=2
+    PATH_NOT_STARTED=0
+    PATH_FOUND=1
+    PATH_NON_EXISTANT=2
     
-    def initialize
-		@astar_map = AStarMap.new
-		@NumberPeople = 3
+    def initialize(astar_map)
+		@astar_map = astar_map
+		@NumberPeople = 1
     end
     
     def path_length(pathfinder_id)
@@ -38,7 +37,7 @@ class AStarLibrary
     
       @pathBank = Hash.new
       for x in 0..@NumberPeople do
-        @pathBank[x] = Array.new(1000)
+        @pathBank[x] = Array.new(@astar_map.width * @astar_map.height)
       end
  
     end
@@ -73,22 +72,11 @@ class AStarLibrary
 
       #2.Quick Path Checks: Under the some circumstances no path needs to
       #	be generated ...
-
-      #	If starting location and target are in the same location...
-      if (startX == targetX && startY == targetY && @pathLocation[pathfinderID] > 0) then
-        return FOUND
-      end
-      
-      if (startX == targetX && startY == targetY && @pathLocation[pathfinderID] == 0) then
-        return NONEXISTANT
-      end
-
-      #	If target square is UNWALKABLE, return that it's a NONEXISTANT path.
-      if (@astar_map.walkability(targetX,targetY) == AStarMap::UNWALKABLE) then
-        puts "NONEXISTANT-no path"
-        noPath
-        return NONEXISTANT
-      end
+	  quick_path_test_result = quick_path_test(startX,targetX,startY,targetY,@pathLocation[pathfinderID],@astar_map.walkability(targetX,targetY))
+	  
+	  if quick_path_test_result != PATH_NOT_STARTED then
+		return quick_path_test_result
+	  end
 
       #3.Reset some variables that need to be cleared
       if (@onClosedList > 1000000) #reset whichList occasionally
@@ -109,10 +97,10 @@ class AStarLibrary
       onOpenList = @onClosedList - 1
 
       #i.e, = 0
-      @pathLength[pathfinderID] = NOTSTARTED
+      @pathLength[pathfinderID] = PATH_NOT_STARTED
 
       #i.e, = 0
-      @pathLocation[pathfinderID] = NOTSTARTED
+      @pathLocation[pathfinderID] = PATH_NOT_STARTED
 
       #reset starting square's G value to 0
       @gcost[startX][startY] = 0
@@ -125,7 +113,7 @@ class AStarLibrary
       @openX[1] = startX
       @openY[1] = startY
 
-      #5.Do the following until a path is found or deemed NONEXISTANT.
+      #5.Do the following until a path is PATH_FOUND or deemed PATH_NON_EXISTANT.
       begin
 
         #6.If the open list is not empty, take the first cell off of the list.
@@ -138,8 +126,7 @@ class AStarLibrary
           @whichList[parentXval][parentYval] = @onClosedList #add the item to the closed list
 
           #	Open List = Binary Heap: Delete this item from the open list, which
-          #  is maintained as a binary heap. For more information on binary heaps, see:
-          #	http://www.policyalmanac.org/games/binaryHeaps.htm
+          #  is maintained as a binary heap. 
           numberOfOpenListItems = numberOfOpenListItems - 1 #reduce number of open list items by 1	
 
           #	Delete the top item in binary heap and reorder the heap, with the lowest F cost item rising to the top.
@@ -332,7 +319,7 @@ class AStarLibrary
                           #sure that we maintain a properly ordered open list.
                           for x in 1..numberOfOpenListItems do #look for the item in the heap
                   
-                            if (@openX[@openList[x]] == a && @openY[@openList[x]] == b) #item found
+                            if (@openX[@openList[x]] == a && @openY[@openList[x]] == b) #item PATH_FOUND
                             
                               @fcost[@openList[x]] = @gcost[a][b] + @hcost[@openList[x]] #change the F cost
 
@@ -365,20 +352,20 @@ class AStarLibrary
 
         #9.If open list is empty then there is no path.	
         else
-          @pathStatus[pathfinderID] = NONEXISTANT
+          @pathStatus[pathfinderID] = PATH_NON_EXISTANT
           break
         end
 
-        #If target is added to open list then path has been found.
+        #If target is added to open list then path has been PATH_FOUND.
         if (@whichList[targetX][targetY] == onOpenList)
-          @pathStatus[pathfinderID] = FOUND
+          @pathStatus[pathfinderID] = PATH_FOUND
           break
         end
 
-      end while (true) #Do until path is found or deemed NONEXISTANT
+      end while (true) #Do until path is PATH_FOUND or deemed PATH_NON_EXISTANT
 
       #10.Save the path if it exists.
-      if (@pathStatus[pathfinderID] == FOUND)
+      if (@pathStatus[pathfinderID] == PATH_FOUND)
 
         
         #a.Working backwards from the target to the starting location by checking
@@ -422,10 +409,29 @@ class AStarLibrary
       return @pathStatus[pathfinderID]
   
     end
+	
+	def quick_path_test(startX, targetX, startY, targetY, path_location, target_walkable_state)
+	  #	If starting location and target are in the same location...
+      if (startX == targetX && startY == targetY && path_location > 0) then
+        return PATH_FOUND
+      end
+      
+      if (startX == targetX && startY == targetY && path_location == 0) then
+        return PATH_NON_EXISTANT
+      end
+
+      #	If target square is UNWALKABLE, return that it's a PATH_NON_EXISTANT path.
+      if (target_walkable_state == AStarMap::UNWALKABLE) then
+        noPath
+        return PATH_NON_EXISTANT
+      end
+	  
+	  return PATH_NOT_STARTED
+	end
 
     #13.If there is no path to the selected target, set the pathfinder's
     #	xPath and yPath equal to its current location and return that the
-    #	path is NONEXISTANT.
+    #	path is PATH_NON_EXISTANT.
     def noPath
       @xPath[pathfinderID] = startingX;
       @yPath[pathfinderID] = startingY;
