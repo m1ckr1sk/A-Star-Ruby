@@ -9,37 +9,20 @@ class JobBuffer
 	end
 	
 	def remove_job(job_id)
-		@job_buffer.delete job_id
+		@job_buffer.delete(job_id)
 	end
 	
 	def available_jobs
 		available_jobs = []
-	
-		@job_buffer.each do |key, value|
-		  start_available = false
-		  end_available = false
-		  map_available = false
-		  
-		  value.each do |k,v|
-			if k == "start_point"
-				start_available = true
-			end
-			
-			if k == "end_point"
-				end_available = true
-			end
-			
-			if k == "map"
-				map_available = true
-			end
-		  end
-		  
-		  if start_available && end_available && map_available then
-			available_jobs << key
+		@job_buffer.each do |job_id, value|
+		  if @job_criteria_matcher.matches_job_criteria(value) then
+        available_jobs << job_id
 		  end 
 		end
-		
 		return available_jobs
 	end
-	
+  
+  def job(job_id)
+    return @job_buffer[job_id]
+  end
 end

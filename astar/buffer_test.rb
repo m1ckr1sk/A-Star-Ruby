@@ -1,7 +1,9 @@
 require 'json'
 require_relative 'job_buffer'
+require_relative 'job_criteria_matcher'
 
-job_buffer = JobBuffer.new
+job_criteria_matcher = JobCriteriaMatcher.new(["start_point","end_point","map"])
+job_buffer = JobBuffer.new(job_criteria_matcher)
 
 start_point_job_message = JSON.parse('{"message":"start_point", "job_id":"1","value":"x,0,y,0"}')
 job_buffer.update_buffer(start_point_job_message)
@@ -15,7 +17,11 @@ map_job_message = JSON.parse('{"message":"map", "job_id":"1","value":"0,0,0,0,0,
 job_buffer.update_buffer(map_job_message)
 puts "jobs ready:#{job_buffer.available_jobs}"
 
-job_buffer.remove_job(job_buffer.available_jobs[0])
+available_jobs = job_buffer.available_jobs
+available_jobs.each do |job_id|
+  puts "COMPLETE JOB: #{job_buffer.job(job_id)}"
+  job_buffer.remove_job(job_id)
+end
 puts "jobs ready:#{job_buffer.available_jobs}"
 
 
