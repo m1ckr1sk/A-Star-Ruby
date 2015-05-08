@@ -20,8 +20,8 @@ class AStarMap
 		f.each_line do |line|
 			line_array = line.split(',')
       column_number = 0
-      line_array.each do |column|
-        @walkability[line_number][column_number] = column.to_i
+      line_array.each do |value|
+        @walkability[line_number][column_number] = value.to_i
         column_number += 1
       end
       line_number += 1
