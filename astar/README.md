@@ -5,7 +5,7 @@ The idea of the A* routing micro service is to have a set of services which send
 ![Alt text](https://github.com/m1ckr1sk/ruby_projects/blob/master/astar/images/ms.png "Optional title")
 
 ##Design Goals
-Below are a set of design goals for each of the services:-
+Below are a set of design goals for each of the services:
 1. Each service should have a heartbeat
 2. Each service should broadcast any configuration when asked
 3. Each service should be configurable
