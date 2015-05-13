@@ -16,7 +16,7 @@ class JobBuffer
 		available_jobs = []
 		@job_buffer.each do |job_id, value|
 		  if @job_criteria_matcher.matches_job_criteria(value) then
-        available_jobs << job_id
+        	available_jobs << job_id
 		  end 
 		end
 		return available_jobs
