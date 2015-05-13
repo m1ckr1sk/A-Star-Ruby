@@ -9,6 +9,7 @@ def draw_route(lines)
   lines.each do |line|
     xval = line.split(',')[1]
     yval = line.split(',')[3]
+    
     replacement_string+="context.lineTo(#{xval},#{yval});\n"
   end
   new_contents = text.gsub(/@@@LINE_ARRAY@@@/, replacement_string)
