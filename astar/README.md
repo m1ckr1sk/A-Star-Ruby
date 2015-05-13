@@ -1,4 +1,7 @@
 #AStar Micro Services
+##Build Status
+[![Circle CI](https://circleci.com/gh/m1ckr1sk/ruby_projects.svg?style=svg)](https://circleci.com/gh/m1ckr1sk/ruby_projects)
+
 ##The Idea
 The idea of the A* routing micro service is to have a set of services which send the routing service a job.  A job contains an ID, a start position, a target position and a map.  A job buffer will store these componenets until they are all ready and then forward them to the routing service.  The routing service will then post the resulting path to a display service.
 
