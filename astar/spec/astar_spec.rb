@@ -1,6 +1,6 @@
-require_relative '..\astar'
-require_relative 'helpers\path_loader'
-require_relative 'helpers\path_writer'
+require_relative '../astar'
+require_relative 'helpers/path_loader'
+require_relative 'helpers/path_writer'
 
 describe 'astar' do
 
