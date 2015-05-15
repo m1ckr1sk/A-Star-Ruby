@@ -42,7 +42,7 @@ def process_map(start_point, end_point, map_string)
 end
 
 # Require configuration
-require_relative 'configuration'
+require_relative '../configuration'
 
 conn = Bunny.new(Configuration.rabbitmq_url, automatically_recover: false)
 conn.start

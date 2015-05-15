@@ -1,7 +1,7 @@
 require "bunny"
 
 # Require configuration
-require_relative 'configuration'
+require_relative '../configuration'
 
 # Start a communication session with RabbitMQ
 conn = Bunny.new(Configuration.rabbitmq_url, :automatically_recover => false)
