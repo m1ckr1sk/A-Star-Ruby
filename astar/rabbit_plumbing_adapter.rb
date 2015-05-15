@@ -1,3 +1,5 @@
+require "bunny"
+
 class RabbitPlumbingAdapter
   def initialize(destination) 
     # Start a communication session with RabbitMQ
@@ -16,18 +18,18 @@ class RabbitPlumbingAdapter
   end
   
   def send_message(topic_name, message)
+    puts " [x] Sending '#{message}' to '#{topic_name}'"
     @topics[topic_name].publish(message)
   end
   
-  def get_message(topic_name, blocking)
-    message_body = ''
-    @topics[topic_name].subscribe(:block => true) do |delivery_info, properties, body|
-      message_body = body
-      puts " [x] Received '#{message_body}'"
-      # cancel the consumer to exit
-      delivery_info.consumer.cancel
-    end
-    
+  def get_message(topic_name)
+    delivery_info, properties, content = @topics[topic_name].pop
+    message_body = if content
+                    puts " [x] Received '#{content}'"
+                    content
+                    else
+                      ""
+                    end
     return message_body
   end
   

@@ -1,5 +1,3 @@
-require "bunny"
-
 # Require configuration
 require_relative '../configuration'
 require_relative '../rabbit_plumbing_adapter'
