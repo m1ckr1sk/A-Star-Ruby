@@ -1,4 +1,4 @@
-require_relative '../astar'
+require_relative '../job_receiver/astar'
 require_relative 'helpers/path_loader'
 require_relative 'helpers/path_writer'
 

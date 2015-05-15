@@ -1,6 +1,6 @@
 require 'json'
-require_relative '../job_buffer'
-require_relative '../job_criteria_matcher'
+require_relative '../job_detail_receiver/job_buffer'
+require_relative '../job_detail_receiver/job_criteria_matcher'
 
 describe 'job_buffer' do
   

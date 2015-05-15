@@ -1,5 +1,6 @@
 require "bunny"
 
+# Require configuration
 require_relative '../configuration'
 
 # Start a communication session with RabbitMQ

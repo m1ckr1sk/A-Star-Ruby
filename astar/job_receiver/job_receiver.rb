@@ -1,7 +1,5 @@
 require 'bunny'
 require 'json'
-
-require_relative '../configuration'
 require_relative 'astar_map'
 require_relative 'astar'
 
@@ -43,6 +41,8 @@ def process_map(start_point, end_point, map_string)
   send_message(route,"routed")
 end
 
+# Require configuration
+require_relative '../configuration'
 
 conn = Bunny.new(Configuration.rabbitmq_url, automatically_recover: false)
 conn.start

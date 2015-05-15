@@ -1,6 +1,7 @@
 require 'bunny'
 require 'json'
 
+# Require configuration
 require_relative '../configuration'
 require_relative 'job_buffer'
 require_relative 'job_criteria_matcher'

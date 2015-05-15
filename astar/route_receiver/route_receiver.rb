@@ -1,5 +1,6 @@
 require "bunny"
 
+# Require configuration
 require_relative '../configuration'
 
 def draw_route(lines)
