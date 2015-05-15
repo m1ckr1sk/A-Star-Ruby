@@ -22,27 +22,44 @@ class JobDetailReceiverService
     @heartbeat=Time.now 
     begin 
 
-      job_message = @plumbing_adapter.get_message('job_data') 
+      check_job_details
       
-      if job_message != '' 
-        parsed_message = JSON.parse(job_message)
-        @job_buffer.update_buffer(parsed_message)
-        available_jobs = @job_buffer.available_jobs
-        
-        #look at complete jobs
-        available_jobs.each do |job_id|
-          puts "job '#{job_id}' is ready!"
-          job_complete = @job_buffer.job(job_id).to_json
-          @plumbing_adapter.send_message('route', job_complete)
-        end
-      end
+      check_config
       
-      config_message = @plumbing_adapter.get_message('config')
-      if config_message != ''
-        @plumbing_adapter.send_message('config', 'job_detail_receiver_config...')
-      end
+      check_heartbeat
       
     end while @poll
+  end
+  
+  def check_job_details
+    job_message = @plumbing_adapter.get_message('job_data') 
+      
+    if job_message != '' 
+      parsed_message = JSON.parse(job_message)
+      @job_buffer.update_buffer(parsed_message)
+      available_jobs = @job_buffer.available_jobs
+        
+      #look at complete jobs
+      available_jobs.each do |job_id|
+        puts "job '#{job_id}' is ready!"
+        job_complete = @job_buffer.job(job_id).to_json
+        @plumbing_adapter.send_message('route', job_complete)
+      end
+    end
+  end
+  
+  def check_config
+    config_message = @plumbing_adapter.get_message('config')
+    if config_message != ''
+      @plumbing_adapter.send_message('config', 'job_detail_receiver_config...')
+    end
+  end
+  
+  def check_heartbeat 
+    if( (Time.now - @heartbeat) > 60) then
+      @heartbeat = Time.now
+      @plumbing_adapter.send_message('heartbeat', 'job_detail_receiver_heartbeat...')
+    end
   end
    
   def stop
