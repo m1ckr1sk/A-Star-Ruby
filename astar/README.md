@@ -14,3 +14,16 @@ Below are a set of design goals for each of the services:
 2. Each service should broadcast any configuration when asked
 3. Each service should be configurable
 4. Each service should be 'plumbing' agnostic, i.e. not tied to a particular framework such as rabbitmq
+
+##Running RabbitMQ using docker
+Once you have docker installed run:
+
+```bash
+docker pull rabbitmq
+```
+
+This will pull the rabbitmq immage from docker hub.  To run the rabbitmq container for the basic application use:
+
+```bash
+docker run -d -p 5672 -e RABBITMQ_NODENAME=my-rabbit --name some-rabbit rabbitmq:3
+```
