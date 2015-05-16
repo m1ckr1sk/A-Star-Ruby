@@ -1,4 +1,3 @@
-require 'bunny'
 require 'json'
 
 require_relative 'job_buffer'
@@ -6,29 +5,27 @@ require_relative 'job_criteria_matcher'
 
 class JobDetailReceiverService
 
-  def initialize(plumbing_adapter)
+  def initialize(plumbing_adapter, job_buffer)
     @plumbing_adapter=plumbing_adapter
     @plumbing_adapter.register_topic('job_data')
     @plumbing_adapter.register_topic('route')
     @plumbing_adapter.register_topic('heartbeat')
     @plumbing_adapter.register_topic('config')
     
-    job_criteria_matcher = JobCriteriaMatcher.new(["start_point","end_point","map"])
-    @job_buffer = JobBuffer.new(job_criteria_matcher)
+    @job_buffer = job_buffer
   end
   
   def start
     @poll = true
     @heartbeat=Time.now 
-    begin 
-
-      check_job_details
-      
-      check_config
-      
-      check_heartbeat
-      
-    end while @poll
+    Thread.abort_on_exception=true
+    @thread_main = Thread.new {
+      begin 
+        check_job_details
+        check_config
+        check_heartbeat
+      end while @poll
+   }  
   end
   
   def check_job_details
@@ -64,6 +61,7 @@ class JobDetailReceiverService
    
   def stop
     @poll = false
+    @thread_main.join
     @plumbing_adapter.close
   end
   

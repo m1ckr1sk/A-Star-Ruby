@@ -9,11 +9,12 @@ class RabbitPlumbingAdapter
     # open a channel
     @channel = @conn.create_channel
     
-    #intialise the topics
+    # intialise the topics
     @topics = Hash.new
   end
   
   def register_topic(topic_name)
+    puts "[x] Registering #{topic_name}"
     @topics[topic_name] = @channel.queue(topic_name)
   end
   
@@ -34,7 +35,7 @@ class RabbitPlumbingAdapter
   end
   
   def close
-    puts "closing connection"
+    puts " [x] Closing connection"
     @conn.stop
   end
 end
