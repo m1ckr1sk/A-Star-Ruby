@@ -1,13 +1,14 @@
 require 'bunny'
 require 'json'
 
-# Require configuration
-require_relative '../configuration'
 require_relative 'job_buffer'
 require_relative 'job_criteria_matcher'
 
+rabbitmq_url = ARGV[0]
+
+
 def send_message(data, queue)
-  send_conn = Bunny.new(Configuration.rabbitmq_url, :automatically_recover => false)
+  send_conn = Bunny.new(rabbitmq_url, :automatically_recover => false)
   send_conn.start
   send_ch = send_conn.create_channel
   send_q = send_ch.queue(queue)
@@ -16,8 +17,14 @@ def send_message(data, queue)
   send_conn.close
 end
 
-conn = Bunny.new(Configuration.rabbitmq_url, automatically_recover: false)
-conn.start
+begin
+  conn = Bunny.new(rabbitmq_url, automatically_recover: false)
+  conn.start
+rescue
+  puts "Connection failed - will retry in 10 seconds"
+  sleep(10)
+  retry 
+end
 
 ch   = conn.create_channel
 q    = ch.queue("job_data")

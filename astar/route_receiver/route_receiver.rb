@@ -1,7 +1,6 @@
 require "bunny"
 
-# Require configuration
-require_relative '../configuration'
+rabbitmq_url = ARGV[0]
 
 def draw_route(lines)
   text = File.read('route_template.html')
@@ -21,8 +20,14 @@ def draw_route(lines)
   puts "Written route to #{route_output_file}"
 end
 
-conn = Bunny.new(Configuration.rabbitmq_url, automatically_recover: false)
-conn.start
+begin
+  conn = Bunny.new(rabbitmq_url, automatically_recover: false)
+  conn.start
+rescue
+  puts "Connection failed - will retry in 10 seconds"
+  sleep(10)
+  retry 
+end
 
 ch   = conn.create_channel
 q    = ch.queue("routed")

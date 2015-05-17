@@ -3,8 +3,10 @@ require 'json'
 require_relative 'astar_map'
 require_relative 'astar'
 
+rabbitmq_url = ARGV[0]
+
 def send_message(data, queue)
-  send_conn = Bunny.new(Configuration.rabbitmq_url, :automatically_recover => false)
+  send_conn = Bunny.new(rabbitmq_url, :automatically_recover => false)
   send_conn.start
   send_ch = send_conn.create_channel
   send_q = send_ch.queue(queue)
@@ -41,11 +43,14 @@ def process_map(start_point, end_point, map_string)
   send_message(route,"routed")
 end
 
-# Require configuration
-require_relative '../configuration'
-
-conn = Bunny.new(Configuration.rabbitmq_url, automatically_recover: false)
-conn.start
+begin
+  conn = Bunny.new(rabbitmq_url, automatically_recover: false)
+  conn.start
+rescue
+  puts "Connection failed - will retry in 10 seconds"
+  sleep(10)
+  retry 
+end
 
 ch   = conn.create_channel
 q    = ch.queue("route")
