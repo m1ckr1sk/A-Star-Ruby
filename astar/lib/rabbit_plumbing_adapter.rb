@@ -4,7 +4,14 @@ class RabbitPlumbingAdapter
   def initialize(destination) 
     # Start a communication session with RabbitMQ
     @conn = Bunny.new(destination, :automatically_recover => false)
-    @conn.start
+    
+    begin
+      @conn.start
+    rescue
+      puts "[x] Failed to connect to #{destination}. Retrying in 10 seconds..."
+      sleep(10)
+      retry
+    end
     
     # open a channel
     @channel = @conn.create_channel

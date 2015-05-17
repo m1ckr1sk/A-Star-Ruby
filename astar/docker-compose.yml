@@ -1,0 +1,24 @@
+jobreceiver:
+  build: .
+  links:
+   - rabbitmq:rabbit
+  command: ruby ./job_receiver/job_receiver.rb amqp://guest:guest@rabbit:5672
+jobdetailreceiver:
+  build: .
+  links:
+   - rabbitmq:rabbit
+  command: ruby ./job_detail_receiver/job_detail_receiver.rb amqp://guest:guest@rabbit:5672
+routereceiver:
+  build: .
+  links:
+   - rabbitmq:rabbit
+  command: ruby ./route_receiver/route_receiver.rb amqp://guest:guest@rabbit:5672
+jobdetailsender:
+  build: .
+  links:
+  - rabbitmq:rabbit
+  command: ruby ./route_receiver/job_detail_sender.rb amqp://guest:guest@rabbit:5672
+rabbitmq:
+  image: rabbitmq
+  environment:
+    - RABBITMQ_NODENAME=my-rabbit

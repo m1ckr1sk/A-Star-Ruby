@@ -6,7 +6,7 @@
 # add connection urls here
 class Configuration
   def self.rabbitmq_url
-    boxen_url || docker_url || default_url
+    command_line_url || boxen_url || docker_url || default_url
   end
 
   def self.default_url
@@ -20,5 +20,9 @@ class Configuration
 
   def self.boxen_url
     ENV['BOXEN_RABBITMQ_URL']
+  end
+  
+  def self.command_line_url
+    ARGV[0]
   end
 end

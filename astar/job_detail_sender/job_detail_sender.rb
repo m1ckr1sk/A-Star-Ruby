@@ -1,6 +1,6 @@
 # Require configuration
-require_relative '../configuration'
-require_relative '../rabbit_plumbing_adapter'
+require_relative '../lib/configuration'
+require_relative '../lib/rabbit_plumbing_adapter'
 require_relative 'auto_job_detail_sender'
 
 rabbit_plumbing_adapter=RabbitPlumbingAdapter.new(Configuration.rabbitmq_url)
