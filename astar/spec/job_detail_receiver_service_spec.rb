@@ -1,4 +1,4 @@
-require_relative '../plumbing_adapter'
+require_relative '../lib/plumbing_adapter'
 require_relative '../job_detail_receiver/job_detail_receiver_service'
 
 describe 'job_detail_receiver_service_spec' do
