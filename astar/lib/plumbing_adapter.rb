@@ -1,9 +1,21 @@
 class PlumbingAdapter
-
-def send_message(data,location)
-end
-
-def receive_messages()
-end
-
+  def initialize(destination) 
+    
+  end
+  
+  def register_topic(topic_name)
+    
+  end
+  
+  def send_message(topic_name, message)
+    
+  end
+  
+  def get_message(topic_name)
+    
+  end
+  
+  def close
+    
+  end
 end

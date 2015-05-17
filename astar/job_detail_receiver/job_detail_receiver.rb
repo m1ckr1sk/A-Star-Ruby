@@ -1,56 +1,26 @@
-require 'bunny'
-require 'json'
-
+# Require configuration
+require_relative '../configuration'
+require_relative '../rabbit_plumbing_adapter'
+require_relative 'job_detail_receiver_service'
 require_relative 'job_buffer'
 require_relative 'job_criteria_matcher'
 
-rabbitmq_url = ARGV[0]
-
-
-def send_message(data, queue)
-  send_conn = Bunny.new(rabbitmq_url, :automatically_recover => false)
-  send_conn.start
-  send_ch = send_conn.create_channel
-  send_q = send_ch.queue(queue)
-  send_ch.default_exchange.publish(data, :routing_key => send_q.name, :persistent => true)
-  puts " [x] Processed '#{data}'"
-  send_conn.close
-end
-
-begin
-  conn = Bunny.new(rabbitmq_url, automatically_recover: false)
-  conn.start
-rescue
-  puts "Connection failed - will retry in 10 seconds"
-  sleep(10)
-  retry 
-end
-
-ch   = conn.create_channel
-q    = ch.queue("job_data")
-
+rabbit_plumbing_adapter=RabbitPlumbingAdapter.new(Configuration.rabbitmq_url)
 job_criteria_matcher = JobCriteriaMatcher.new(["start_point","end_point","map"])
 job_buffer = JobBuffer.new(job_criteria_matcher)
+job_detail_receiver_service = JobDetailReceiverService.new(rabbit_plumbing_adapter,job_buffer)
 
 begin
-  puts " [*] Job receiver ------"
+  puts " [*] Job detail receiver ------"
   puts " [*] Receiving processed messages..."
   puts " [*] To exit press CTRL+C"
-  q.subscribe(:block => true) do |delivery_info, properties, body|
-    puts " [x] Received '#{body}'"
-    
-    parsed_message = JSON.parse(body)
-    job_buffer.update_buffer(parsed_message)
-    available_jobs = job_buffer.available_jobs
-    available_jobs.each do |job_id|
-      puts "job '#{job_id}' is ready!"
-      job_complete = job_buffer.job(job_id).to_json
-      puts "sending #{job_complete}"
-      send_message(job_complete,"route")
-    end
-  end
+  job_detail_receiver_service.start
+  
+  begin
+    sleep(10)
+  end while true
+  
 rescue Interrupt => _
-  conn.close
-
+  job_detail_receiver_service.stop
   exit(0)
 end
