@@ -1,6 +1,5 @@
 require "bunny"
-
-rabbitmq_url = ARGV[0]
+require_relative '../lib/configuration'
 
 def draw_route(lines)
   text = File.read('route_template.html')
@@ -21,7 +20,7 @@ def draw_route(lines)
 end
 
 begin
-  conn = Bunny.new(rabbitmq_url, automatically_recover: false)
+  conn = Bunny.new(Configuration.rabbitmq_url, automatically_recover: false)
   conn.start
 rescue
   puts "Connection failed - will retry in 10 seconds"
