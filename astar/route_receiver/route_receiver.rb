@@ -8,8 +8,9 @@ def draw_route(lines)
     xval = line.split(',')[1]
     yval = line.split(',')[3]
     
-    replacement_string+="context.lineTo(#{xval},#{yval});\n"
+    replacement_string+="[#{xval},#{yval}],"
   end
+  replacement_string = replacement_string[0...-1]
   new_contents = text.gsub(/@@@LINE_ARRAY@@@/, replacement_string)
   route_file_name=Time.now.strftime("%H_%M_%S")
   route_output_file="#{route_file_name}.html"

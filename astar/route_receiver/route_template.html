@@ -29,9 +29,8 @@
 	  var drawOffsetX = cw / 2;
 	  var drawOffsetY = rw / 2;
 
-	  //@@@LINE_ARRAY@@@
-	  var items = [[0,0],[1,1],[2,2],[3,3],[2,3],[2,4],[3,4]];
-	  
+	  var items = [@@@LINE_ARRAY@@@];
+    
 	  window.addEventListener('resize', resizeCanvas, false);
 	  function resizeCanvas() {
 				canvas.width = window.innerWidth;
@@ -40,8 +39,8 @@
 				bw = canvas.width;
 				cw = bw / p;
 				rw = bh / p;
-				drawOffsetX = cw /2;
-				drawOffsetY = rw/2;
+				drawOffsetX = cw;
+				drawOffsetY = rw;
 				/**
 				 * Your drawings need to be inside this function otherwise they will be reset when 
 				 * you resize the browser window and the canvas goes will be cleared.
@@ -63,13 +62,15 @@
 		  context.clearRect(0, 0, canvas.width, canvas.height);
 		  context.beginPath();
 		  		  		  
-		  context.moveTo((items[0][0] * drawOffsetX), (items[0][1] * drawOffsetY));
+		  context.moveTo((items[0][0] * drawOffsetX) + (drawOffsetX/2) + p, (items[0][1] * drawOffsetY)+ (drawOffsetY/2) + p);
 		  for(var i = 1; i< total_steps;i++)
 		  {
-			var item = items[i]
-			context.lineTo((item[0] * drawOffsetX) + drawOffsetX, (item[1] * drawOffsetY) + drawOffsetY);
+         var item = items[i]
+        context.lineTo((item[0] * drawOffsetX) + (drawOffsetX/2) + p, (item[1] * drawOffsetY) + (drawOffsetY/2) + p);
 		  }
 		  		  
+      context.lineWidth = 2;
+      context.strokeStyle = "#54DF4D";
 		  context.stroke();
 		  context.closePath();
 		  drawBoard();
