@@ -9,15 +9,94 @@
     </style>
   </head>
   <body>
-    <canvas id="myCanvas" width="578" height="200"></canvas>
+    <canvas id="myCanvas" width="400" height="400"></canvas>
     <script>
+	  if (!Date.now) {
+		Date.now = function() { return new Date().getTime(); }
+	  }
+	  var requestAnimationFrame = window.requestAnimationFrame || 
+										window.mozRequestAnimationFrame || 
+										window.webkitRequestAnimationFrame || 
+										window.msRequestAnimationFrame;
       var canvas = document.getElementById('myCanvas');
       var context = canvas.getContext('2d');
+	  var total_steps = 0;
+	  var bh = canvas.height;
+	  var bw = canvas.width;
+	  var p = 10;
+	  var cw = bw / p;
+	  var rw = bh / p;
+	  var drawOffsetX = cw / 2;
+	  var drawOffsetY = rw / 2;
 
-      context.beginPath();
-      context.moveTo(0, 0);
-      @@@LINE_ARRAY@@@
-      context.stroke();
+	  //@@@LINE_ARRAY@@@
+	  var items = [[0,0],[1,1],[2,2],[3,3],[2,3],[2,4],[3,4]];
+	  
+	  window.addEventListener('resize', resizeCanvas, false);
+	  function resizeCanvas() {
+				canvas.width = window.innerWidth;
+				canvas.height = window.innerHeight;
+				bh = canvas.height;
+				bw = canvas.width;
+				cw = bw / p;
+				rw = bh / p;
+				drawOffsetX = cw /2;
+				drawOffsetY = rw/2;
+				/**
+				 * Your drawings need to be inside this function otherwise they will be reset when 
+				 * you resize the browser window and the canvas goes will be cleared.
+				 */
+				drawRoute();
+			}
+	  resizeCanvas();	
+	  
+	  setInterval(function(){
+		total_steps++;
+		if(total_steps > items.length)
+		  {
+			total_steps = 0;
+		  }
+		},1000);
+
+	  function drawRoute()
+	  {
+		  context.clearRect(0, 0, canvas.width, canvas.height);
+		  context.beginPath();
+		  		  		  
+		  context.moveTo((items[0][0] * drawOffsetX), (items[0][1] * drawOffsetY));
+		  for(var i = 1; i< total_steps;i++)
+		  {
+			var item = items[i]
+			context.lineTo((item[0] * drawOffsetX) + drawOffsetX, (item[1] * drawOffsetY) + drawOffsetY);
+		  }
+		  		  
+		  context.stroke();
+		  context.closePath();
+		  drawBoard();
+		  requestAnimationFrame(drawRoute);
+	  }
+	  drawRoute();
+	  
+	  function drawBoard(){
+		context.beginPath();
+		context.moveTo(0, 0);
+		//cols
+		for (var x = 0; x <= bw; x += cw) {
+			context.moveTo(0.5 + x + p, p);
+			context.lineTo(0.5 + x + p, bh + p);
+		}
+		// rows
+		for (var x = 0; x <= bh; x += rw) {
+			context.moveTo(p, 0.5 + x + p);
+			context.lineTo(bw + p, 0.5 + x + p);
+		}
+
+		context.strokeStyle = "black";
+		context.stroke();
+		context.closePath();
+	}
+	drawBoard();
+	
     </script>
   </body>
 </html>      
