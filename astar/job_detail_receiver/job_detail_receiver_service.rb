@@ -39,8 +39,13 @@ class JobDetailReceiverService
       #look at complete jobs
       available_jobs.each do |job_id|
         puts "job '#{job_id}' is ready!"
-        job_complete = @job_buffer.job(job_id).to_json
+        job_hash = @job_buffer.job(job_id)
+        job_hash.store('job_id',job_id)
+        puts "job:#{job_hash}"
+        job_complete = job_hash.to_json
+        puts job_complete.inspect
         @plumbing_adapter.send_message('route', job_complete)
+        @job_buffer.remove_job(job_id)
       end
     end
   end

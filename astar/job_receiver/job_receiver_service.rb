@@ -29,7 +29,7 @@ class JobReceiverService
     job_message = @plumbing_adapter.get_message('route') 
     if job_message != '' 
       message = JSON.parse(job_message)
-      process_map(message["start_point"], message["end_point"], message["map"])
+      process_map(message["job_id"], message["start_point"], message["end_point"], message["map"])
     end
   end
   
@@ -47,7 +47,7 @@ class JobReceiverService
     end
   end
   
-  def process_map(start_point, end_point, map_string)
+  def process_map(job_id, start_point, end_point, map_string)
     puts "Processing Map"
     lines = map_string.split("\n")
     columns = lines[0].split(',')
@@ -74,7 +74,11 @@ class JobReceiverService
       route.concat("X,#{astar.ReadPathX(pathfinder_id,i)},Y,#{astar.ReadPathY(pathfinder_id,i)}\n")
     end
     
-    @plumbing_adapter.send_message('routed',route)
+    route_hash=Hash.new
+    route_hash[job_id] = route
+    route_message=route_hash.to_json
+    
+    @plumbing_adapter.send_message('routed',route_message)
   end
   
   def stop
