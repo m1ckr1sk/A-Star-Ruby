@@ -54,3 +54,9 @@ To send through additional job_detail_sender messages, open a new (boot2docker) 
 ```bash
 docker-compose run jobdetailsender ruby ./job_detail_sender/job_detail_sender.rb amqp://rabbit:5672 
 ```
+
+Use docker exec to look inside a running container, e.g:
+
+```bash
+docker exec -it astar_routereceiver_1 /bin/bash
+```
