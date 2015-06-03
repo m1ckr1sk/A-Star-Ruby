@@ -52,7 +52,7 @@ docker-compose rm
 To send through additional job_detail_sender messages, open a new (boot2docker) terminal and run an individual jobdetailsender:
 
 ```bash
-docker-compose run jobdetailsender ruby ./job_detail_sender/job_detail_sender.rb amqp://rabbit:5672 
+docker-compose run --no-deps jobdetailsender ruby ./job_detail_sender/job_detail_sender.rb amqp://rabbit:5672
 ```
 
 Use docker exec to look inside a running container, e.g:
