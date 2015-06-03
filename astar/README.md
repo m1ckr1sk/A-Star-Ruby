@@ -29,7 +29,7 @@ docker run -d -p 5672 -e RABBITMQ_NODENAME=my-rabbit --name some-rabbit rabbitmq
 ```
 
 ##Running system using docker-compose
-[docker-compose](https://docs.docker.com/compose/) is a convenient way to spin up the entire system within docker containers. Once you have docker-compose installed, build the docker images by running:
+[docker-compose](https://docs.docker.com/compose/) is a convenient way to spin up the entire system within docker containers. Once you have docker-compose installed, go to the main project directory (the one containing docker-compose.yml) and build the docker images by running:
 
 ```bash
 docker-compose build
@@ -52,7 +52,7 @@ docker-compose rm
 To send through additional job_detail_sender messages, open a new (boot2docker) terminal and run an individual jobdetailsender:
 
 ```bash
-docker-compose run jobdetailsender ruby ./job_detail_sender/job_detail_sender.rb amqp://rabbit:5672 
+docker-compose run --no-deps jobdetailsender ruby ./job_detail_sender/job_detail_sender.rb amqp://rabbit:5672
 ```
 
 Use docker exec to look inside a running container, e.g:
