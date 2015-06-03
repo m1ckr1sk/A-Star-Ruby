@@ -33,7 +33,8 @@ def initialize(plumbing_adapter)
   end
   
   def draw_route(job_id, lines)
-    text = File.read('route_template.html')
+      
+    text = File.read(File.dirname(__FILE__) + '/route_template.html')
     replacement_string = ''
     lines.each do |line|
       xval = line.split(',')[1]
