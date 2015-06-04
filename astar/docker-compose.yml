@@ -13,12 +13,18 @@ routereceiver:
   links:
    - rabbitmq:rabbit
   command: ruby ./route_receiver/route_receiver.rb amqp://guest:guest@rabbit:5672
+  environment:
+   - TEMPLATE_FILE_DIR=./route_receiver/
 jobdetailsender:
   build: .
   links:
   - rabbitmq:rabbit
   command: ruby ./route_receiver/job_detail_sender.rb amqp://guest:guest@rabbit:5672
 rabbitmq:
-  image: rabbitmq
+  image: rabbitmq:3-management
+  hostname: some-rabbit
+  ports:
+    - "5672:5672"
+    - "15672:15672" 
   environment:
     - RABBITMQ_NODENAME=my-rabbit

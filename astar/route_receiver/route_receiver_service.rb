@@ -33,23 +33,29 @@ def initialize(plumbing_adapter)
   end
   
   def draw_route(job_id, lines)
-    text = File.read('route_template.html')
-    replacement_string = ''
-    lines.each do |line|
-      xval = line.split(',')[1]
-      yval = line.split(',')[3]
-      replacement_string+="[#{xval},#{yval}],"
-    end
-    
-    replacement_string = replacement_string[0...-1]
-    new_contents = text.gsub(/@@@LINE_ARRAY@@@/, replacement_string)
-    route_file_name=Time.now.strftime("%H_%M_%S")
-    
-    route_output_file="#{job_id}_#{route_file_name}.html"
-    File.open(route_output_file, 'w') do |file| 
-        file.puts(new_contents)
-    end
-    puts "Written route to #{route_output_file}"
+    begin
+      text = File.read(Configuration.route_template_location + 'route_template.html')
+      replacement_string = ''
+      lines.each do |line|
+        xval = line.split(',')[1]
+        yval = line.split(',')[3]
+        replacement_string+="[#{xval},#{yval}],"
+      end
+      
+      replacement_string = replacement_string[0...-1]
+      new_contents = text.gsub(/@@@LINE_ARRAY@@@/, replacement_string)
+      route_file_name=Time.now.strftime("%H_%M_%S")
+      
+      route_output_file="#{Configuration.route_template_location}#{job_id}_#{route_file_name}.html"
+      File.open(route_output_file, 'w') do |file| 
+          file.puts(new_contents)
+      end
+      puts "Written route to #{route_output_file}"
+  	rescue Exception => e  
+  	  puts e.message  
+  	  puts e.backtrace.inspect 
+      raise 'Failed route receive' 
+  	end  
   end
   
   def check_config

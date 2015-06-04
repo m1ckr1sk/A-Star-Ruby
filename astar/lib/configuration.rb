@@ -9,6 +9,18 @@ class Configuration
     command_line_url || boxen_url || docker_url || default_url
   end
 
+  def self.route_template_location
+    route_template_location_env || route_template_location_default
+  end
+
+  def self.route_template_location_env
+    ENV['TEMPLATE_FILE_DIR']
+  end
+
+  def self.route_template_location_default
+    "./"
+  end
+
   def self.default_url
     "amqp://guest:guest@localhost:5672"
   end
