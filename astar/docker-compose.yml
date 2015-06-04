@@ -13,7 +13,7 @@ routereceiver:
   links:
    - rabbitmq:rabbit
   command: ruby ./route_receiver/route_receiver.rb amqp://guest:guest@rabbit:5672
-  volumes:
+  volumes_from:
     - data
   environment:
    - TEMPLATE_FILE_DIR=./route_receiver/

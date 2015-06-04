@@ -20,7 +20,7 @@ class AutoJobDetailSender
     @plumbing_adapter.send_message('job_data','{"message":"map", "job_id":"2","value":"0,0,0,0,0,0,0,0,0,0\n0,0,0,0,0,0,0,0,0,0\n0,0,0,0,0,0,0,0,0,0\n0,0,0,0,0,0,0,0,0,0\n0,0,0,0,1,1,1,1,0,0\n0,0,0,0,0,0,1,0,0,0\n0,0,0,0,0,1,0,0,0,0\n0,0,0,0,0,0,0,0,0,0\n0,0,0,0,0,0,0,0,0,0\n0,0,0,0,0,0,0,0,0,0\n"}')
   end
   
-  def close
+  def stop
     @plumbing_adapter.close
   end
 end
