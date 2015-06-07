@@ -12,7 +12,9 @@ routereceiver:
   build: .
   links:
    - rabbitmq:rabbit
-  command: ruby ./route_receiver/route_receiver.rb amqp://guest:guest@rabbit:5672
+  ports: 
+    - "8000:8000"
+  command: sh -c "python -m SimpleHTTPServer & ruby ./route_receiver/route_receiver.rb amqp://guest:guest@rabbit:5672"
   volumes_from:
     - data
   environment:

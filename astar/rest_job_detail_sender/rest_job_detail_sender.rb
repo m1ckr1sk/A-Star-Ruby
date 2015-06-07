@@ -13,9 +13,6 @@ set :bind, '0.0.0.0'
 post '/message' do
   request.body.rewind
   json = request.body.read
-  puts '######################################################'
-  puts json
-  puts '######################################################'  
   plumbing_adapter.send_message('job_data',json)
 end
 
