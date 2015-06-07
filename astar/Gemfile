@@ -1,6 +1,9 @@
 source "https://rubygems.org"
 
 gem "bunny"
+gem "sinatra"
+gem "thin"
+gem "rest-client"
 
 group :test, :cucumber do
   gem "cucumber"
