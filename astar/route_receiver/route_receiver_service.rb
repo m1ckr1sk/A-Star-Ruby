@@ -78,9 +78,7 @@ class RouteReceiverService
       lines.each do |line|
         col_count = 0
         cols = line.split(',')
-        puts "LINE:#{line}"
         cols.each do |col|
-          puts "COL:#{col}"
           if col == '1'
             replacement_string+="[#{col_count},#{row_count}],"
           end
