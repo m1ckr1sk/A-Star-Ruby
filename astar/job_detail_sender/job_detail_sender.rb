@@ -13,6 +13,6 @@ begin
 end while true
   
 rescue Interrupt => _
-  exit(0)
+  exit(true)
 end
 

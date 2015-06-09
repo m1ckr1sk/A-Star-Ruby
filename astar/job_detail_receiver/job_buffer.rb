@@ -1,3 +1,5 @@
+require_relative '../lib/criteria_matcher'
+
 class JobBuffer
 	def initialize(job_criteria_matcher)
 		@job_buffer = Hash.new{|hash, key| hash[key] = Hash.new{|hash, key| hash[key] = ""}}
@@ -15,7 +17,7 @@ class JobBuffer
 	def available_jobs
 		available_jobs = []
 		@job_buffer.each do |job_id, value|
-		  if @job_criteria_matcher.matches_job_criteria(value) then
+		  if @job_criteria_matcher.matches_criteria(value) then
         	available_jobs << job_id
 		  end 
 		end
