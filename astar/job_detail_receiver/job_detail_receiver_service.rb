@@ -1,7 +1,6 @@
 require 'json'
 
 require_relative 'job_buffer'
-require_relative 'job_criteria_matcher'
 
 class JobDetailReceiverService
 

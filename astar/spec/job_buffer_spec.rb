@@ -1,6 +1,5 @@
 require 'json'
 require_relative '../job_detail_receiver/job_buffer'
-require_relative '../job_detail_receiver/job_criteria_matcher'
 
 describe 'job_buffer' do
   
@@ -8,7 +7,7 @@ it 'should return a job when all critieria for a complete job is met' do
   
   #Arrange
   job_id = 'test_job_1'
-  job_criteria_matcher = JobCriteriaMatcher.new(["start_point","end_point","map"])
+  job_criteria_matcher = CriteriaMatcher.new(["start_point","end_point","map"])
   job_buffer = JobBuffer.new(job_criteria_matcher)
   
   start_point_job_message = JSON.parse('{"message":"start_point", "job_id":"'+job_id+'","value":"x,0,y,0"}')
@@ -35,7 +34,7 @@ it 'should not return a job when only partial critieria for a complete job is me
   
   #Arrange
   job_id = 'test_job_1'
-  job_criteria_matcher = JobCriteriaMatcher.new(["start_point","end_point","map"])
+  job_criteria_matcher = CriteriaMatcher.new(["start_point","end_point","map"])
   job_buffer = JobBuffer.new(job_criteria_matcher)
   
   start_point_job_message = JSON.parse('{"message":"start_point", "job_id":"'+job_id+'","value":"x,0,y,0"}')
@@ -57,7 +56,7 @@ it 'should remove a job from its buffer' do
   
   #Arrange
   job_id_1 = 'test_job_1'
-  job_criteria_matcher = JobCriteriaMatcher.new(["start_point","end_point","map"])
+  job_criteria_matcher = CriteriaMatcher.new(["start_point","end_point","map"])
   job_buffer = JobBuffer.new(job_criteria_matcher)
   
   start_point_job_message = JSON.parse('{"message":"start_point", "job_id":"'+job_id_1+'","value":"x,0,y,0"}')
@@ -70,7 +69,7 @@ it 'should remove a job from its buffer' do
   job_buffer.update_buffer(map_job_message)
   
   job_id_2 = 'test_job_2'
-  job_criteria_matcher = JobCriteriaMatcher.new(["start_point","end_point","map"])
+  job_criteria_matcher = CriteriaMatcher.new(["start_point","end_point","map"])
   
   start_point_job_message = JSON.parse('{"message":"start_point", "job_id":"'+job_id_2+'","value":"x,0,y,0"}')
   job_buffer.update_buffer(start_point_job_message)

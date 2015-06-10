@@ -16,12 +16,12 @@ class AStarMap
 		path_array = Array.new
 		f = File.open(walkability_file) or die "Unable to open walkability file...#{walkability_file}"
     
-    line_number = 0
+    	line_number = 0
 		f.each_line do |line|
 			line_array = line.split(',')
-      column_number = 0
+      		column_number = 0
       line_array.each do |value|
-        @walkability[line_number][column_number] = value.to_i
+        @walkability[column_number][line_number] = value.to_i
         column_number += 1
       end
       line_number += 1

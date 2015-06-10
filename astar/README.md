@@ -29,7 +29,10 @@ docker run -d -p 5672 -e RABBITMQ_NODENAME=my-rabbit --name some-rabbit rabbitmq
 ```
 
 ##Running system using docker-compose
-[docker-compose](https://docs.docker.com/compose/) is a convenient way to spin up the entire system within docker containers. Once you have docker-compose installed, build the docker images by running:
+
+###Basic approach
+
+[docker-compose](https://docs.docker.com/compose/) is a convenient way to spin up the entire system within docker containers. Once you have docker-compose installed, go to the main project directory (the one containing docker-compose.yml) and build the docker images by running:
 
 ```bash
 docker-compose build
@@ -44,7 +47,7 @@ docker-compose up
 After each run, clear down the containers:
 
 ```bash
-docker-compose rm
+docker-compose rm -f
 ```
 
 (If you forget to do this, subsequent runs will fail).
@@ -52,7 +55,7 @@ docker-compose rm
 To send through additional job_detail_sender messages, open a new (boot2docker) terminal and run an individual jobdetailsender:
 
 ```bash
-docker-compose run jobdetailsender ruby ./job_detail_sender/job_detail_sender.rb amqp://rabbit:5672 
+docker-compose run --no-deps jobdetailsender ruby ./job_detail_sender/job_detail_sender.rb amqp://rabbit:5672
 ```
 
 Use docker exec to look inside a running container, e.g:
@@ -60,3 +63,21 @@ Use docker exec to look inside a running container, e.g:
 ```bash
 docker exec -it astar_routereceiver_1 /bin/bash
 ```
+###Using the web interfaces
+
+The system provides web interfaces for job input and output.
+
+A REST interface on port 4567 is provided for job input. (If using boot2docker, replace "localhost" with the boot2docker ip).
+
+```bash
+# Set start point
+curl -H "Content-Type: application/json" -X POST -d '{"message":"start_point","job_id":"42","value":"x,0,y,0"}' http://localhost:4567/message
+
+# Set end point
+curl -H "Content-Type: application/json" -X POST -d '{"message":"end_point", "job_id":"42","value":"x,9,y,9"}' http://localhost:4567/message
+
+# Set map
+curl -H "Content-Type: application/json" -X POST -d '{"message":"map", "job_id":"42","value":"0,0,0,0,0,0,0,0,0,0\n0,0,0,0,0,0,0,0,0,0\n0,0,0,0,0,0,0,0,0,0\n0,0,0,0,0,0,0,0,0,0\n0,0,0,0,0,0,0,0,0,0\n0,0,0,0,0,0,0,0,0,0\n0,0,0,0,0,0,0,0,0,0\n0,0,0,0,0,0,0,0,0,0\n0,0,0,0,0,0,0,0,0,0\n0,0,0,0,0,0,0,0,0,0\n"}' http://localhost:4567/message
+```
+
+To examine system output, point a browser to http://localhost:8000 (again adjust "localhost" if using boot2docker).

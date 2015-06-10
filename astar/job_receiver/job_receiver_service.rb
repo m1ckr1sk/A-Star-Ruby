@@ -75,7 +75,9 @@ class JobReceiverService
     end
     
     route_hash=Hash.new
-    route_hash[job_id] = route
+    route_hash['job_id'] = job_id
+    route_hash['value'] = route
+    route_hash['message'] = 'route'
     route_message=route_hash.to_json
     
     @plumbing_adapter.send_message('routed',route_message)

@@ -18,11 +18,14 @@ class RabbitPlumbingAdapter
     
     # intialise the topics
     @topics = Hash.new
+    @queues = Hash.new
   end
   
   def register_topic(topic_name)
     puts "[x] Registering #{topic_name}"
-    @topics[topic_name] = @channel.queue(topic_name)
+    @topics[topic_name] = @channel.topic(topic_name)
+    @queues[topic_name] = @channel.queue()
+    @queues[topic_name].bind(@topics[topic_name])
   end
   
   def send_message(topic_name, message)
@@ -31,7 +34,7 @@ class RabbitPlumbingAdapter
   end
   
   def get_message(topic_name)
-    delivery_info, properties, content = @topics[topic_name].pop
+    delivery_info, properties, content = @queues[topic_name].pop
     message_body = if content
                     puts " [x] Received '#{content}'"
                     content
@@ -43,6 +46,7 @@ class RabbitPlumbingAdapter
   
   def close
     puts " [x] Closing connection"
+    @channel.close
     @conn.stop
   end
 end

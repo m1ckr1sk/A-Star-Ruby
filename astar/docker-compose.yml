@@ -12,13 +12,35 @@ routereceiver:
   build: .
   links:
    - rabbitmq:rabbit
-  command: ruby ./route_receiver/route_receiver.rb amqp://guest:guest@rabbit:5672
+  ports: 
+    - "8000:8000"
+  command: sh -c "python -m SimpleHTTPServer & ruby ./route_receiver/route_receiver.rb amqp://guest:guest@rabbit:5672"
+  volumes_from:
+    - data
+  environment:
+   - TEMPLATE_FILE_DIR=./route_receiver/
 jobdetailsender:
   build: .
   links:
   - rabbitmq:rabbit
-  command: ruby ./route_receiver/job_detail_sender.rb amqp://guest:guest@rabbit:5672
+  command: ruby ./job_detail_sender/job_detail_sender.rb amqp://guest:guest@rabbit:5672
+restjobdetailsender:
+  build: .
+  links:
+    - rabbitmq:rabbit
+  ports: 
+    - "4567:4567"
+  command: ruby ./rest_job_detail_sender/rest_job_detail_sender.rb amqp://guest:guest@rabbit:5672
 rabbitmq:
-  image: rabbitmq
+  image: rabbitmq:3-management
+  hostname: some-rabbit
+  ports:
+    - "5672:5672"
+    - "15672:15672" 
   environment:
     - RABBITMQ_NODENAME=my-rabbit
+data:
+  # pure data container
+  image: ruby:2.1-onbuild
+  volumes:
+    - /routes
