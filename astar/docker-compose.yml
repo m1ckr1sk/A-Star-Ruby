@@ -19,11 +19,11 @@ routereceiver:
     - data
   environment:
    - TEMPLATE_FILE_DIR=./route_receiver/
-jobdetailsender:
-  build: .
-  links:
-  - rabbitmq:rabbit
-  command: ruby ./job_detail_sender/job_detail_sender.rb amqp://guest:guest@rabbit:5672
+#jobdetailsender:
+#  build: .
+#  links:
+#  - rabbitmq:rabbit
+#  command: ruby ./job_detail_sender/job_detail_sender.rb amqp://guest:guest@rabbit:5672
 restjobdetailsender:
   build: .
   links:
